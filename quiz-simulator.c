@@ -10,6 +10,7 @@ struct answer {
 
 };
 
+
 void get_questions() {
 
     FILE* fp;
@@ -27,27 +28,30 @@ void get_questions() {
     fclose ( fp );
 }
 
-void check_answers( float answer_array[] , struct answer ans[] , int *score ) {
+void check_answers( float answer_array[] , struct answer ans[] , int *score , int *correct , int *incorrect ) {
+
+  
 
     for ( int i = 0; i < 2; i++ ) {
 
 
         if ( ans[i].ans == answer_array[i] ) {
             
-            *score++;
+            (*score)++; (*correct)++;
             strcpy( ans[i].status , "CORRECT" );
 
         }
 
         else{
 
+            (*incorrect)++;
             strcpy( ans[i].status , "INCORRECT" );
 
         }
     }
 }
 
-void calculate_result( float answer_array[] , struct answer ans[] , int *score ) {
+void calculate_result( float answer_array[] , struct answer ans[] , int score , int *correct , int *incorrect , char name[]) {
 
     FILE* fp;
     char buffer[100];
@@ -61,6 +65,7 @@ void calculate_result( float answer_array[] , struct answer ans[] , int *score )
 
     fprintf(fp ,"\n----------------------------");
     fprintf( fp , "\nAttempted on :- %s" , ctime(&curr_time) );
+    fprintf(fp , "Username: %s" , name);
 
     for ( int i = 0; i < 2; i++ ) {
 
@@ -68,7 +73,8 @@ void calculate_result( float answer_array[] , struct answer ans[] , int *score )
 
     }
 
-    fprintf (fp,"\n overall score: (%p/2)" , *score);
+    fprintf (fp,"\n overall score: (%d/2)" , score);
+    fprintf (fp , "\ncorrect:%d | incorrect:%d" , *correct , *incorrect);
 
     printf ("Result written to file succesfully!");
 
@@ -80,12 +86,19 @@ int main () {
 
     float answer_array[] = { 14 , 12 };
 
+     char name[50];
+
+    printf( "\nEnter your Name:- ");
+    fgets (name , 50 , stdin);
+
     get_questions();
 
     struct answer ans[2];
 
     int score = 0;
-    
+    int correct = 0 ; int incorrect = 0;
+   
+
     for ( int i = 0; i < 2; i++ ) {
 
         printf ( "\nEnter answer of question-%d:- " , i+1 );
@@ -94,8 +107,8 @@ int main () {
 
     }
 
-    check_answers(  answer_array , ans , &score );
-    calculate_result( answer_array , ans , &score );
+    check_answers(  answer_array , ans , &score , &correct , &incorrect );
+    calculate_result( answer_array , ans , score , &correct , &incorrect , name);
 
     return 0;
 }

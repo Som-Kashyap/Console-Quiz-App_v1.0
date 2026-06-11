@@ -76,9 +76,29 @@ void calculate_result( float answer_array[] , struct answer ans[] , int score , 
     fprintf (fp,"\n overall score: (%d/2)" , score);
     fprintf (fp , "\ncorrect:%d | incorrect:%d" , *correct , *incorrect);
 
-    printf ("Result written to file succesfully!");
+    printf ("Results written to file succesfully!\n");
 
     fclose(fp);
+
+}
+
+void display_history() {
+
+    FILE* fp;
+
+    char buffer[100];
+
+    fp = fopen( "result.txt" , "r" );
+
+    if (!fp) printf("ERROR- opening file for displaying results!");
+
+    while ( fgets( buffer , 500 , fp)!=NULL ) {
+
+        printf ( "%s" , buffer );
+
+    }
+
+    fclose( fp );
 
 }
 
@@ -90,6 +110,8 @@ int main () {
 
     printf( "\nEnter your Name:- ");
     fgets (name , 50 , stdin);
+
+    name[strcspn(name, "\n")] = 0; //for clearing the input buffer
 
     get_questions();
 
@@ -109,6 +131,20 @@ int main () {
 
     check_answers(  answer_array , ans , &score , &correct , &incorrect );
     calculate_result( answer_array , ans , score , &correct , &incorrect , name);
+
+    char choice;
+
+    printf( "\nDisplay past attempts? (Y/N): ");
+    
+    while ((getchar()) != '\n');
+    
+    scanf( "%c" , &choice );
+
+    if (  choice == 'Y' ) {
+
+        display_history();
+
+     }
 
     return 0;
 }

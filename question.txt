@@ -1,3 +1,0 @@
-OPERATOR PRECEDENCE QUIZ IN C:-
-question-1 : 2 + 4*3 
-question-2 : 6 + 3 * 4/2 

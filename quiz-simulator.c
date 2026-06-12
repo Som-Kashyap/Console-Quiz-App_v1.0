@@ -43,9 +43,9 @@ void get_questions() {
 
 }
 
-void check_answers(float answer_array[], struct answer ans[], int *score, int *correct, int *incorrect) {
+void check_answers(float answer_array[], struct answer ans[], int *score, int *correct, int *incorrect , int number_of_questions) {
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < number_of_questions; i++) {
 
         if (ans[i].ans == answer_array[i]) {
 
@@ -62,7 +62,7 @@ void check_answers(float answer_array[], struct answer ans[], int *score, int *c
     }
 }
 
-void calculate_result(float answer_array[], struct answer ans[], int score, int correct, int incorrect, char name[]) {
+void calculate_result(float answer_array[], struct answer ans[], int score, int correct, int incorrect, char name[] , int number_of_questions) {
 
     FILE* fp;
     time_t curr_time;
@@ -81,16 +81,16 @@ void calculate_result(float answer_array[], struct answer ans[], int score, int 
     fprintf(fp, "\nAttempted on :- %s", ctime(&curr_time));
     fprintf(fp, "Username: %s", name);
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < number_of_questions; i++) {
 
         fprintf(fp, "\nanswer-%d : %s", i + 1, ans[i].status);
 
     }
 
-    fprintf(fp, "\nOverall score: (%d/2)", score);
+    fprintf(fp, "\nOverall score: (%d/%d)", score , number_of_questions);
     fprintf(fp, "\nCorrect: %d | Incorrect: %d", correct, incorrect);
 
-    float accuracy = ((float)correct / 2) * 100;
+    float accuracy = ((float)correct / number_of_questions) * 100;
     fprintf(fp, "\nAccuracy: (%.2f%%)", accuracy);
 
     printf("Results written to file successfully!\n");
@@ -124,10 +124,12 @@ void add_question() {
 
     printf("Enter question:-\n");
 
-    if (!(fgets(buffer, sizeof(buffer), stdin))) {
-        printf("ERROR could not read question!\n");
-        return;
-    }
+   if (!(fgets(buffer, sizeof(buffer), stdin))) {
+
+    printf("ERROR- could not add questions!\n");
+    return;
+
+}
 
     fp = fopen("questions.txt", "a");
 
@@ -182,8 +184,8 @@ void User_Interface(enum operations *opt) {
     }
 }
 
-void logic(enum operations opt, char name[], char correct_password[], struct answer ans[], float answer_array[], int *score, int *correct, int *incorrect) {
-    
+void logic(enum operations opt, char name[], char correct_password[], struct answer ans[], float answer_array[], int *score, int *correct, int *incorrect , int number_of_questions) {
+
     int admin_choice;
 
     if (opt == start) {
@@ -193,19 +195,20 @@ void logic(enum operations opt, char name[], char correct_password[], struct ans
 
         get_questions();
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < number_of_questions; i++) {
             printf("\nEnter answer of question-%d:- ", i + 1);
             scanf("%f", &ans[i].ans);
         }
         while ((getchar()) != '\n'); // clear buffer
 
-        check_answers(answer_array, ans, score, correct, incorrect);
-        calculate_result(answer_array, ans, *score, *correct, *incorrect, name);
+        check_answers(answer_array, ans, score, correct, incorrect , number_of_questions);
+        calculate_result(answer_array, ans, *score, *correct, *incorrect, name , number_of_questions);
 
     } else if (opt == attempts) {
         display_history();
 
     } else if (opt == admin) {
+
         char password[50];
         printf("Enter password:- ");
         scanf("%s", password);
@@ -218,8 +221,10 @@ void logic(enum operations opt, char name[], char correct_password[], struct ans
             scanf("%d", &admin_choice);
 
             if (admin_choice == 1) {
+
                 while ((getchar()) != '\n'); // clear buffer
                 add_question();
+
             } else if (admin_choice == 2) {
                 delete_history();
             } else {
@@ -233,15 +238,19 @@ void logic(enum operations opt, char name[], char correct_password[], struct ans
 
 int main() {
 
+    int number_of_questions = 3;
+
     enum operations opt = menu;
-    float answer_array[] = {14, 12};
+    float answer_array[] = {14, 12 , 0};
     char name[50];
     char correct_password[] = "somkashyap01";
     struct answer ans[2];
     int score = 0, correct = 0, incorrect = 0;
 
+    while (1) {
     User_Interface(&opt);
-    logic(opt, name, correct_password, ans, answer_array, &score, &correct, &incorrect);
+    logic(opt, name, correct_password, ans, answer_array, &score, &correct, &incorrect , number_of_questions);
+    }
 
     return 0;
 

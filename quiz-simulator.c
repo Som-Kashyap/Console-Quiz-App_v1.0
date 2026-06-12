@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include "users.h"
 
 struct answer {
 
@@ -119,6 +120,7 @@ void display_history() {
 }
 
 void add_question() {
+    
     FILE* fp;
     char buffer[100];
 
@@ -167,7 +169,7 @@ void User_Interface(enum operations *opt) {
 
     int option_selected;
 
-    printf("QUIZ APP:\n");
+    printf("\nQUIZ APP:\n");
     printf("1) START QUIZ\n");
     printf("2) VIEW PAST ATTEMPTS\n");
     printf("3) ADMIN LOGIN\n");
@@ -184,7 +186,7 @@ void User_Interface(enum operations *opt) {
     }
 }
 
-void logic(enum operations opt, char name[], char correct_password[], struct answer ans[], float answer_array[], int *score, int *correct, int *incorrect , int number_of_questions) {
+void logic(enum operations opt, char name[], char correct_password[], struct answer ans[], float answer_array[], int *score, int *correct, int *incorrect , int number_of_questions , struct User user[] , int userCount ) {
 
     int admin_choice;
 
@@ -203,6 +205,7 @@ void logic(enum operations opt, char name[], char correct_password[], struct ans
 
         check_answers(answer_array, ans, score, correct, incorrect , number_of_questions);
         calculate_result(answer_array, ans, *score, *correct, *incorrect, name , number_of_questions);
+        Save_Users( user , userCount );
 
     } else if (opt == attempts) {
         display_history();
@@ -238,6 +241,9 @@ void logic(enum operations opt, char name[], char correct_password[], struct ans
 
 int main() {
 
+    struct User user[MAX_USERS];
+    int userCount = 0;
+
     int number_of_questions = 3;
 
     enum operations opt = menu;
@@ -247,9 +253,15 @@ int main() {
     struct answer ans[2];
     int score = 0, correct = 0, incorrect = 0;
 
+    printf("Loading user/s data.....");
+    Load_Users( user , &userCount );
+    printf("\nLoaded %d users!" , userCount);
+    
     while (1) {
+
     User_Interface(&opt);
-    logic(opt, name, correct_password, ans, answer_array, &score, &correct, &incorrect , number_of_questions);
+    logic(opt, name, correct_password, ans, answer_array, &score, &correct, &incorrect , number_of_questions , user , userCount);
+
     }
 
     return 0;

@@ -7,13 +7,14 @@
 ---
 ## Features:
 - Menu driven interface
+- User Signup  
 - User and Admin modes
 - Password-protected admin access
 - Add questions
 - View attempt history  
 - Delete history
 - Score tracking
-- File-based storage
+- File-based storage (user-data and attempt history )
 
 ---
 ## Technologies:

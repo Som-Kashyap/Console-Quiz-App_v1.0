@@ -14,5 +14,6 @@ struct User {
 void Load_Users ( struct User user[] , int *userCount );
 void Save_Users ( struct User user[] , int userCount );
 int Find_Users ( struct User user[] , int userCount , char name[] );
+void Add_Users ( struct User user[] , int *userCount , char name[] );
 
 #endif

@@ -28,13 +28,21 @@ void Save_Users ( struct User user[] , int userCount ) {
 
     FILE* fp = fopen( "users.txt" , "w" );
 
-    if ( !fp ) printf( "ERROR- opening file for storing user data!");
+    if (!fp) {
+    printf("ERROR opening file!\n");
+    return;
+}
+
+    printf("Saving %d users\n", userCount);
 
     for ( int i = 0; i < userCount; i++ ) {
 
-        fprintf( fp , "%s,%d,%d" , user[i].username , user[i].attempts , user[i].bestScore );
+        printf("Writing user: %s\n", user[i].username);
+        fprintf( fp , "%s,%d,%d\n" , user[i].username , user[i].attempts , user[i].bestScore );
 
     }
+
+    printf("Data written to users file successfully!");
 
     fclose(fp);
 
@@ -44,8 +52,24 @@ int Find_Users ( struct User user[] , int userCount , char name[] ) {
 
     for( int i = 0; i < userCount; i++ ) {
 
-        if( strcmp( user[i].username , name ) == 0 ) return i;
+        if( strcmp( user[i].username , name ) == 0 ) return i; 
     }
 
     return -1;
+}
+
+void Add_Users ( struct User user[] , int *userCount , char name[] ) {
+
+    strcpy( user[*userCount].username , name);
+    user[*userCount].attempts = 0;
+    user[*userCount].bestScore = 0;
+
+    printf("Before increment: %d\n", *userCount);
+
+    (*userCount)++;
+
+    printf("After increment: %d\n", *userCount);
+
+    Save_Users( user , *userCount);
+
 }

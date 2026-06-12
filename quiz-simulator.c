@@ -13,6 +13,7 @@ struct answer {
 enum operations {
 
     menu,
+    signup,
     start,
     attempts,
     admin
@@ -120,7 +121,7 @@ void display_history() {
 }
 
 void add_question() {
-    
+
     FILE* fp;
     char buffer[100];
 
@@ -171,8 +172,9 @@ void User_Interface(enum operations *opt) {
 
     printf("\nQUIZ APP:\n");
     printf("1) START QUIZ\n");
-    printf("2) VIEW PAST ATTEMPTS\n");
-    printf("3) ADMIN LOGIN\n");
+    printf("2) SIGNUP\n");
+    printf("3) VIEW PAST ATTEMPTS\n");
+    printf("4) ADMIN LOGIN\n");
 
     printf("Enter choice:- ");
     scanf("%d", &option_selected);
@@ -180,32 +182,47 @@ void User_Interface(enum operations *opt) {
 
     switch (option_selected) {
         case 1: *opt = start; break;
-        case 2: *opt = attempts; break;
-        case 3: *opt = admin; break;
+        case 2: *opt = signup; break;
+        case 3: *opt = attempts; break;
+        case 4: *opt = admin; break;
         default: *opt = menu; break;
     }
 }
 
-void logic(enum operations opt, char name[], char correct_password[], struct answer ans[], float answer_array[], int *score, int *correct, int *incorrect , int number_of_questions , struct User user[] , int userCount ) {
+void logic(enum operations opt, char name[], char correct_password[], struct answer ans[], float answer_array[], int *score, int *correct, int *incorrect , int number_of_questions , struct User user[] , int *userCount ) {
 
     int admin_choice;
 
     if (opt == start) {
+
         printf("\nEnter your Name:- ");
         fgets(name, 50, stdin);
+
         name[strcspn(name, "\n")] = '\0'; // strip newline
+
+        int user_idx = Find_Users( user , *userCount , name );
+
+        if ( user_idx == -1 ) {
+            printf( "No such user was found!");
+            return;
+        }
 
         get_questions();
 
         for (int i = 0; i < number_of_questions; i++) {
+
             printf("\nEnter answer of question-%d:- ", i + 1);
             scanf("%f", &ans[i].ans);
+
         }
+        
         while ((getchar()) != '\n'); // clear buffer
+        
+        user[user_idx].attempts++;
 
         check_answers(answer_array, ans, score, correct, incorrect , number_of_questions);
         calculate_result(answer_array, ans, *score, *correct, *incorrect, name , number_of_questions);
-        Save_Users( user , userCount );
+        Save_Users( user , *userCount );
 
     } else if (opt == attempts) {
         display_history();
@@ -237,6 +254,16 @@ void logic(enum operations opt, char name[], char correct_password[], struct ans
             printf("Incorrect password!\n");
         }
     }
+    else if( opt == signup ) {
+
+        
+        printf("Creating new user.....\n");
+        printf("\nEnter your Name:- ");
+        fgets(name, 50, stdin);
+        name[strcspn(name, "\n")] = '\0';
+        Add_Users( user , userCount , name );
+
+    }
 }
 
 int main() {
@@ -260,7 +287,7 @@ int main() {
     while (1) {
 
     User_Interface(&opt);
-    logic(opt, name, correct_password, ans, answer_array, &score, &correct, &incorrect , number_of_questions , user , userCount);
+    logic(opt, name, correct_password, ans, answer_array, &score, &correct, &incorrect , number_of_questions , user , &userCount);
 
     }
 

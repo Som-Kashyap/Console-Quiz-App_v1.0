@@ -37,7 +37,6 @@ void Save_Users ( struct User user[] , int userCount ) {
 
     for ( int i = 0; i < userCount; i++ ) {
 
-        printf("Writing user: %s\n", user[i].username);
         fprintf( fp , "%s,%d,%d\n" , user[i].username , user[i].attempts , user[i].bestScore );
 
     }
@@ -64,11 +63,11 @@ void Add_Users ( struct User user[] , int *userCount , char name[] ) {
     user[*userCount].attempts = 0;
     user[*userCount].bestScore = 0;
 
-    printf("Before increment: %d\n", *userCount);
+    printf("Users Before increment: %d\n", *userCount);
 
     (*userCount)++;
 
-    printf("After increment: %d\n", *userCount);
+    printf("Users After increment: %d\n", *userCount);
 
     Save_Users( user , *userCount);
 

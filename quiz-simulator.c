@@ -113,6 +113,7 @@ void display_history() {
 
     }
 
+    printf("Attempt History Loading........\n");
     while (fgets(buffer, sizeof(buffer), fp) != NULL) {
         printf("%s", buffer);
     }
@@ -177,7 +178,13 @@ void User_Interface(enum operations *opt) {
     printf("4) ADMIN LOGIN\n");
 
     printf("Enter choice:- ");
-    scanf("%d", &option_selected);
+    
+    if( scanf("%d", &option_selected) != 1){
+        printf("Invalid Input!\n");
+        *opt = menu;
+        while ((getchar()) != '\n');
+        return;
+    }
     while ((getchar()) != '\n'); // clear buffer
 
     switch (option_selected) {
@@ -186,6 +193,7 @@ void User_Interface(enum operations *opt) {
         case 3: *opt = attempts; break;
         case 4: *opt = admin; break;
         default: *opt = menu; break;
+        
     }
 }
 
@@ -254,16 +262,21 @@ void logic(enum operations opt, char name[], char correct_password[], struct ans
             printf("Incorrect password!\n");
         }
     }
-    else if( opt == signup ) {
+    else if (opt == signup)
+{
+    printf("Creating new user.....\n");
 
-        
-        printf("Creating new user.....\n");
-        printf("\nEnter your Name:- ");
-        fgets(name, 50, stdin);
-        name[strcspn(name, "\n")] = '\0';
-        Add_Users( user , userCount , name );
+    printf("\nEnter your Name:- ");
+    fgets(name, 50, stdin);
 
-    }
+    name[strcspn(name, "\n")] = '\0';
+
+    printf("You entered: '%s'\n", name);
+
+    Add_Users(user, userCount, name);
+
+    printf("Signup finished\n");
+}
 }
 
 int main() {
@@ -277,7 +290,7 @@ int main() {
     float answer_array[] = {14, 12 , 0};
     char name[50];
     char correct_password[] = "somkashyap01";
-    struct answer ans[2];
+    struct answer ans[number_of_questions];
     int score = 0, correct = 0, incorrect = 0;
 
     printf("Loading user/s data.....");
